@@ -26,4 +26,4 @@ Example config file:
 `rm` will remove the polka-dot package from polka-dot.
 
 ##Notes
-polka-dot will not save your current configuration when `apply` is used, so make sure to `save` before you `apply` if you wish to save your current configuration before changing?
+polka-dot will not save your current configuration when `apply` is used, so make sure to `save` before you `apply` if you wish to save your current configuration before changing!
