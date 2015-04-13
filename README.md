@@ -14,15 +14,15 @@ Example config file:
 ```
 
 ###save
-`polka-dot save package-name`
+`polka-dot save package-name`  
 `save` will package the files listed in the config file into a polka-dot *package*.
 
 ###apply
-`polka-dot apply package-name`
+`polka-dot apply package-name`  
 `apply` will apply the polka-dot package to the files listed in the config file.
 
 ###rm
-`polka-dot rm package-name`
+`polka-dot rm package-name`  
 `rm` will remove the polka-dot package from polka-dot.
 
 ##Notes
