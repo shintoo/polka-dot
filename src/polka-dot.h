@@ -1,5 +1,7 @@
-#define MAXPATH  1
-#define MAXFILEs 2 
+#define MAXPATH  64
+#define MAXFILES 64
+#define ERR_MP   1
+#define ERR_MF   2
 
 int readconfig(FILE *config, char **files);
 
