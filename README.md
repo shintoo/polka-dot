@@ -26,7 +26,7 @@ Example config file:
 `rm` will remove the polka-dot package from polka-dot.
 
 ###list
-`polka-dot list`
+`polka-dot list`  
 `list` will list all of the currently saved packages.
 
 ##Notes
