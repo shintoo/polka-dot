@@ -128,10 +128,12 @@ void apply(struct cfile *config, char (*paths)[MAXFILES], char *pkgname) {
 	char *endfiletag = "{{ end file }}";
 	int endflag = 0;
 
-	for (int i = 0; i < config->filecount; i++) {
 #ifdef DEBUG
+	for (int i = 0; i < config->filecount; i++) {
 		printf("i: %d\n", i);
+	}
 #endif
+	for (int i = 0; i < config->filecount; i++) {
 		filetag = (char *) malloc(13 + strlen(paths[i]));
 		strcat(filetag, "{{ file: ");
 		strcat(filetag, paths[i]);				// filetag = "{{ file: <paths[i]> }}"
@@ -142,9 +144,9 @@ void apply(struct cfile *config, char (*paths)[MAXFILES], char *pkgname) {
 		while (endflag == 0) {				// from end of beginfile tag to beginning of endfile tag
 			c = fgetc(pkg);
 			if (c == endfiletag[0]) {				// Start comparing if first char is found
-				for (i = 1; i < 14; i++) {
-					if ((c = fgetc(pkg)) == endfiletag[i]) {
-						if (i == 13) {
+				for (int n = 1; n < 14; n++) {
+					if ((c = fgetc(pkg)) == endfiletag[n]) {
+						if (n == 13) {
 							endflag = 1;
 							break;
 						}
@@ -154,12 +156,16 @@ void apply(struct cfile *config, char (*paths)[MAXFILES], char *pkgname) {
 						break;
 					}
 				}
-				if (endflag = 1) {
+				if (endflag == 1) {
 					break;
 				}
 			}
 			fputc(c, temp);
 		}
+#ifdef DEBUG
+		printf("loopi: %d\n", i);
+#endif
+		endflag = 0;
 		fclose(temp);
 		free(filetag);
 		rewind(pkg);
