@@ -1,10 +1,20 @@
 #include "polka-dot.h"
 
-void printUsage(char *str) {
-	fprintf(stderr, "%s: usage: polka-dot <command> <package-name>\n\ncommands:\n"
-			"    save\tSave the current configuration as a package\n"
-			"    apply\tApply the package\n"
-			"    rm\tRemove the package\n", str);	
+void printUsage(char *str, enum command cmd) {
+	switch (cmd) {
+		case SAVE ... REMOVE:
+			fprintf(stderr, "usage: %s %s <package-name>\n", str, cmd == 1 ? "save" : cmd == 2 ? "apply" : "rm");
+			break;
+		case LIST:
+			fprintf(stderr, "usage: %s list\n", str);
+			break;
+		default:
+			fprintf(stderr, "usage: %s <command> [<package-name>]\n\ncommands:\n"
+					"    save <package-name> \tSave the current configuration as a package\n"
+					"    apply <package-name>\tApply the package\n"
+					"    rm <package-name>   \tRemove the package\n"
+					"    list                \tList saved packages\n", str);
+	}
 }
 
 //finds string str in file fp, returns location at end of string
@@ -36,23 +46,37 @@ int findString(FILE *fp, char *str, fpos_t *strloc) {
 
 int getcmd(int argc, char **argv) {
 	enum command cmd;
-	
-	if (argc != 3) {
-		printUsage(argv[0]);
+
+	if (argc != 3 && argc != 2) {
+		printUsage(argv[0], cmd);
 		exit(EXIT_FAILURE);
 	}
-	if (strncmp(argv[1], "save", 4) == 0) {
+	
+	if (strncmp(argv[1], "list", 4) == 0) {
+		cmd = LIST;
+		if (argc != 2) {
+			printUsage(argv[0], cmd);
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	else if (strncmp(argv[1], "save", 4) == 0) {
 		cmd = SAVE;
 	}
+
 	else if (strncmp(argv[1], "apply", 6) == 0) {
 		cmd = APPLY;
 	}
+
 	else if (strncmp (argv[1], "rm", 2) == 0) {
 		cmd = REMOVE;
 	}
-	else {
-		cmd = CMD_ERROR;
+
+	if (argc != 3 && cmd != LIST) {
+		printUsage(argv[0], cmd);
+		exit(EXIT_FAILURE);
 	}
+
 	return cmd;
 }
 
@@ -98,7 +122,7 @@ int readConfig(struct cfile *config, char (*paths)[MAXFILES]) {
 	return 0;
 }
 
-void save(struct cfile *config, char (*paths)[MAXFILES], char *pkgname) {
+void save(struct cfile *config, char (*paths)[MAXFILES], char *pkgname, char *name) {
 	FILE *pkg = fopen(pkgname, "w");
 	FILE *temp;
 	char c;
@@ -117,27 +141,33 @@ void save(struct cfile *config, char (*paths)[MAXFILES], char *pkgname) {
 		fprintf(pkg, "{{ end file }}\n\n");
 		fclose(temp);
 	}
+	printf("Files packaged into %s.\n", name);
 }
 
-void apply(struct cfile *config, char (*paths)[MAXFILES], char *pkgname) {
-	FILE *pkg = fopen(pkgname, "r");
+void apply(struct cfile *config, char (*paths)[MAXFILES], char *pkgname, char *name) {
+	FILE *pkg;
 	FILE *temp;
 	char c;
 	fpos_t floc, endloc, curloc;				// Location of file tag, location of endfile tag, current location
 	char *filetag;
 	char *endfiletag = "{{ end file }}";
 	int endflag = 0;
+	int i;
 
 #ifdef DEBUG
 	for (int i = 0; i < config->filecount; i++) {
 		printf("i: %d\n", i);
 	}
 #endif
+	if ((pkg = fopen(pkgname, "r")) == NULL) {
+		fprintf(stderr, "package '%s' not found\n", name);
+		exit(EXIT_FAILURE);
+	}
 	for (int i = 0; i < config->filecount; i++) {
 		filetag = (char *) malloc(13 + strlen(paths[i]));
 		strcat(filetag, "{{ file: ");
-		strcat(filetag, paths[i]);				// filetag = "{{ file: <paths[i]> }}"
-		strcat(filetag, " }}");
+		strcat(filetag, paths[i]);				// filetag = "{{ file: <paths[i]> }}\n"
+		strcat(filetag, " }}\n");
 		findString(pkg, filetag, &floc);		// floc is at the end of beginfile tag
 		fsetpos(pkg, &floc);
 		temp = fopen(paths[i], "w");
@@ -170,11 +200,35 @@ void apply(struct cfile *config, char (*paths)[MAXFILES], char *pkgname) {
 		free(filetag);
 		rewind(pkg);
 	}
+	printf("Package %s applied.\n", name);
 }
 
 void rm(char *pkgname) {
-
+	if (remove(pkgname) != 0) {
+		fprintf(stderr, "polka-dot: error remove file %s\n", pkgname);
+	}
 }
 
+void list(char *home) {
+	DIR *dir;
+	struct dirent *item;
+	char dirname[64], pkgname[128];
+	char *ft;
 
-
+	strcpy(dirname, home);
+	strcat(dirname, "/.polka-dot/");
+	if ((dir = opendir(dirname)) != NULL) {
+		while ((item = readdir(dir)) != NULL) {
+			if ((ft = strstr(item->d_name, ".pd")) != NULL) {
+				strncpy(pkgname, item->d_name, 128);
+				pkgname[strlen(pkgname) - 3] = '\0';
+				puts(pkgname);
+			}
+		}
+		closedir(dir);
+	}
+	else {
+		fprintf(stderr, "polka-dot: Could not open package directory.\nDid you delete ./polka-dot/?\n");
+		exit(EXIT_FAILURE);
+	}
+}
