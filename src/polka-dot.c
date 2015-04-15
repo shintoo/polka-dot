@@ -7,6 +7,33 @@ void printUsage(char *str) {
 			"    rm\tRemove the package\n", str);	
 }
 
+//finds string str in file fp, returns location at end of string
+int findString(FILE *fp, char *str, fpos_t *strloc) {
+	char c;
+	int len, i = 0, ret_val = 1;			// ret_val: 0 = notfound, 1 = found
+
+	len = strlen(str);
+	while ((c = fgetc(fp)) != EOF) {
+		if (c == str[0]) {				// Start comparing if first char is found
+			for (i = 1; i < len; i++) {
+				if ((c = fgetc(fp)) == str[i]) {
+					if (i == len - 1) {
+						fgetpos(fp, strloc);
+						ret_val = 0;
+						break;
+					}
+				} else {
+					ret_val = 1;
+					break;
+				}
+			}
+			if (ret_val = 0)
+				break;
+		}
+	}
+	return ret_val;
+}
+
 int getcmd(int argc, char **argv) {
 	enum command cmd;
 	
@@ -87,16 +114,61 @@ void save(struct cfile *config, char (*paths)[MAXFILES], char *pkgname) {
 		while ((c = fgetc(temp)) != EOF) {
 			fputc(c, pkg);
 		}
-		fprintf(pkg, "\n{{ end file }}\n\n");
+		fprintf(pkg, "{{ end file }}\n\n");
+		fclose(temp);
 	}
 }
 
 void apply(struct cfile *config, char (*paths)[MAXFILES], char *pkgname) {
+	FILE *pkg = fopen(pkgname, "r");
+	FILE *temp;
+	char c;
+	fpos_t floc, endloc, curloc;				// Location of file tag, location of endfile tag, current location
+	char *filetag;
+	char *endfiletag = "{{ end file }}";
+	int endflag = 0;
 
+	for (int i = 0; i < config->filecount; i++) {
+#ifdef DEBUG
+		printf("i: %d\n", i);
+#endif
+		filetag = (char *) malloc(13 + strlen(paths[i]));
+		strcat(filetag, "{{ file: ");
+		strcat(filetag, paths[i]);				// filetag = "{{ file: <paths[i]> }}"
+		strcat(filetag, " }}");
+		findString(pkg, filetag, &floc);		// floc is at the end of beginfile tag
+		fsetpos(pkg, &floc);
+		temp = fopen(paths[i], "w");
+		while (endflag == 0) {				// from end of beginfile tag to beginning of endfile tag
+			c = fgetc(pkg);
+			if (c == endfiletag[0]) {				// Start comparing if first char is found
+				for (i = 1; i < 14; i++) {
+					if ((c = fgetc(pkg)) == endfiletag[i]) {
+						if (i == 13) {
+							endflag = 1;
+							break;
+						}
+					}
+					else {
+						endflag = 0;
+						break;
+					}
+				}
+				if (endflag = 1) {
+					break;
+				}
+			}
+			fputc(c, temp);
+		}
+		fclose(temp);
+		free(filetag);
+		rewind(pkg);
+	}
 }
 
 void rm(char *pkgname) {
 
 }
+
 
 

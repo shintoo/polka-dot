@@ -15,6 +15,9 @@ struct cfile {
 /* Print the usage when there is a user error*/
 void printUsage(char *str);
 
+/* Find the location of a string in a file */
+int findString(FILE *fp, char *str, fpos_t *strloc);
+
 /* Retrieve the command provided by the second argument */
 int getcmd(int argc, char **args);
 
