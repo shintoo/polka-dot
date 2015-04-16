@@ -173,6 +173,7 @@ void apply(struct cfile *config, char (*paths)[MAXFILES], char *pkgname, char *n
 		temp = fopen(paths[i], "w");
 		while (endflag == 0) {				// from end of beginfile tag to beginning of endfile tag
 			c = fgetc(pkg);
+			fputc(c, temp);
 			if (c == endfiletag[0]) {				// Start comparing if first char is found
 				for (int n = 1; n < 14; n++) {
 					if ((c = fgetc(pkg)) == endfiletag[n]) {
@@ -190,7 +191,6 @@ void apply(struct cfile *config, char (*paths)[MAXFILES], char *pkgname, char *n
 					break;
 				}
 			}
-			fputc(c, temp);
 		}
 #ifdef DEBUG
 		printf("loopi: %d\n", i);
