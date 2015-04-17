@@ -30,7 +30,7 @@ int readConfig(struct cfile *config, char (*paths)[MAXFILES]);
 void save(struct cfile *config, char (*paths)[MAXFILES], char *pkgname, char *name);
 
 /* Apply the contents of a package to the files
- * specified in the config file
+ * in the package
  */
 void apply(struct cfile *config, char (*paths)[MAXFILES], char *pkgname, char *name);
 

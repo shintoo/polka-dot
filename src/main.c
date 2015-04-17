@@ -7,9 +7,6 @@
  * TODO:
  *		- Ask user to confirm if when saving a package,
  *		  there is already a package with that name.
- *		- fix apply() so that it puts characters after '{'
- *		  in the package if it isn't the endfile tag
- *		  but still match the characters of the endfile tag
  * 		- Add show command: 'polka-dot show <package-name>,
  *		  which shows which files have versions in the package.
  *		- Add option to 'apply' that allows user to apply the
@@ -20,8 +17,7 @@
  *			- rm:  	  takes filename argument, removes it from config
  *		    - status: lists files in config
  *
- *		- For consideration: Overhaul entire program to mimick git
- *		  for package creation (namely init, status, add/rm)
+ *		- GTK GUI
  */
 
 #include <dirent.h>
