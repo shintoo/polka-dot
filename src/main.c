@@ -1,4 +1,4 @@
-#define DEBUG
+//#define DEBUG
 
 /* polka-dot: The simple configuration manager.
  * 
