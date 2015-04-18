@@ -192,11 +192,12 @@ void apply(char (*paths)[MAXFILES], char *pkgname, char *name) {
 		temp = fopen(paths[i], "w");
 		while (endflag == 0) {					// from end of beginfile tag to beginning of endfile tag
 			c = fgetc(pkg);
-			fputc(c, temp);
+//			fputc(c, temp);
 			if (c == endfiletag[0]) {			// Start comparing if first char is found
+				endbuf[0] = c;
 				for (int n = 1; n < 14; n++) {
 					c = fgetc(pkg);
-					endbuf[n - 1] = c;
+					endbuf[n] = c;
 					if (c == endfiletag[n]) {
 						if (n == 13) {
 							endflag = 1;
@@ -209,14 +210,17 @@ void apply(char (*paths)[MAXFILES], char *pkgname, char *name) {
 						break;
 					}
 				}
-				endbuf[eblen] = '\0';
+				endbuf[eblen + 1] = '\0';
 				if (endflag == 1) {
-					fputc('\b', temp);
+//					fputc('\b', temp);
 					break;
 				}
 				else {
 					fputs(endbuf, temp);
 				}
+			}
+			else {
+				fputc(c, temp);
 			}
 		}
 #ifdef DEBUG
@@ -247,6 +251,9 @@ void list(char *home) {
 	strcat(dirname, "/.polka-dot/");
 	if ((dir = opendir(dirname)) != NULL) {
 		while ((item = readdir(dir)) != NULL) {
+			if (item->d_name[0] == '.') {
+				continue;
+			}
 			if ((ft = strstr(item->d_name, ".pd")) != NULL) {
 				strncpy(pkgname, item->d_name, 128);
 				pkgname[strlen(pkgname) - 3] = '\0';
