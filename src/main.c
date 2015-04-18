@@ -1,4 +1,4 @@
-//#define DEBUG
+#define DEBUG
 
 /* polka-dot: The simple configuration manager.
  * 
@@ -79,10 +79,11 @@ int main(int argc, char **argv) {
 			save(&config, paths, pkgname, argv[2]);
 			break;
 		case APPLY:
-			apply(&config, paths, pkgname, argv[2]);
+			apply(paths, pkgname, argv[2]);
 			break;
 		case REMOVE:
 			rm(pkgname);
+			printf("Package %s deleted.\n", argv[2]);
 			break;
 		case LIST:
 			list(home);

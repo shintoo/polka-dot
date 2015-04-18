@@ -88,7 +88,7 @@ int readConfig(struct cfile *config, char (*paths)[MAXFILES]) {
 		while ((c = fgetc(config->file)) != '\n' && c != EOF) {
 			if (c == '~') {
 				if (ci != 0) {
-					fprintf(stderr, "polka-dot: config formatting error: config.%d.%d", fi, ci);
+					fprintf(stderr, "Config formatting error: config.%d.%d", fi, ci);
 					exit(EXIT_FAILURE);
 				}
 				home = getenv("HOME");
@@ -134,38 +134,33 @@ void save(struct cfile *config, char (*paths)[MAXFILES], char *pkgname, char *na
 #endif
 	for (int i = 0; i < config->filecount; i++) {
 		temp = fopen(paths[i], "r");
-		fprintf(pkg, "{{ file: %s }}\n", paths[i]);
+		fprintf(pkg, "---file: %s---\n", paths[i]);
 		while ((c = fgetc(temp)) != EOF) {
 			fputc(c, pkg);
 		}
-		fprintf(pkg, "{{ end file }}\n\n");
+		fprintf(pkg, "---end file---\n\n");
 		fclose(temp);
 	}
 	printf("Files packaged into %s.\n", name);
 }
 
-void apply(struct cfile *config, char (*paths)[MAXFILES], char *pkgname, char *name) {
+void apply(char (*paths)[MAXFILES], char *pkgname, char *name) {
 	FILE *pkg;
 	FILE *temp;
 	char c;
 	fpos_t floc, endloc, curloc;				// Location of file tag, location of endfile tag, current location
 	char *filetag;
 	char endbuf[15];
-	char *endfiletag = "{{ end file }}";
+	char *endfiletag = "---end file---";
 	int endflag = 0;							// 0: endfile tag not found, 1: found
 	int i, eblen, filecount = 0;				// endbuf length
 
-#ifdef DEBUG
-	for (int i = 0; i < config->filecount; i++) {
-		printf("i: %d\n", i);
-	}
-#endif
 	if ((pkg = fopen(pkgname, "r")) == NULL) {
-		fprintf(stderr, "package '%s' not found\n", name);
+		fprintf(stderr, "Package '%s' not found\n", name);
 		exit(EXIT_FAILURE);
 	}
 
-/*	while (c != EOF) {				// from end of beginfile tag to beginning of endfile tag
+	while (c != EOF) {				// from end of beginfile tag to beginning of endfile tag
 		c = fgetc(pkg);
 		if (c == endfiletag[0]) {				// Start comparing if first char is found
 			for (int n = 1; n < 14; n++) {
@@ -179,29 +174,26 @@ void apply(struct cfile *config, char (*paths)[MAXFILES], char *pkgname, char *n
 					endflag = 0;
 					break;
 				}
-				endbuf[n] = c;
-				eblen = n;
 			}
 			if (endflag == 1) {
 				filecount++;
 			}
 		}
 	}
-*/
-
-//	for (int i = 0; i < filecount; i++) {
-	for (int i = 0; i < config->filecount; i++) {
+	rewind(pkg);
+	endflag = 0;
+	for (int i = 0; i < filecount; i++) {
 		filetag = (char *) malloc(13 + strlen(paths[i]));
-		strcat(filetag, "{{ file: ");
+		strcat(filetag, "---file: ");
 		strcat(filetag, paths[i]);				// filetag = "{{ file: <paths[i]> }}\n"
-		strcat(filetag, " }}\n");
+		strcat(filetag, "---\n");
 		findString(pkg, filetag, &floc);		// floc is at the end of beginfile tag
 		fsetpos(pkg, &floc);
 		temp = fopen(paths[i], "w");
-		while (endflag == 0) {				// from end of beginfile tag to beginning of endfile tag
+		while (endflag == 0) {					// from end of beginfile tag to beginning of endfile tag
 			c = fgetc(pkg);
 			fputc(c, temp);
-			if (c == endfiletag[0]) {				// Start comparing if first char is found
+			if (c == endfiletag[0]) {			// Start comparing if first char is found
 				for (int n = 1; n < 14; n++) {
 					c = fgetc(pkg);
 					endbuf[n - 1] = c;
@@ -240,7 +232,8 @@ void apply(struct cfile *config, char (*paths)[MAXFILES], char *pkgname, char *n
 
 void rm(char *pkgname) {
 	if (remove(pkgname) != 0) {
-		fprintf(stderr, "polka-dot: error removing file '%s'\n", pkgname);
+		fprintf(stderr, "Error removing file '%s'\n", pkgname);
+		exit(EXIT_FAILURE);
 	}
 }
 
@@ -263,7 +256,7 @@ void list(char *home) {
 		closedir(dir);
 	}
 	else {
-		fprintf(stderr, "polka-dot: Could not open package directory.\nDid you delete '%s/polka-dot/'?\n", home);
+		fprintf(stderr, "Could not open package directory.\nDid you delete '%s/.polka-dot/'?\n", home);
 		exit(EXIT_FAILURE);
 	}
 }

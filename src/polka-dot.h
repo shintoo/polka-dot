@@ -32,7 +32,7 @@ void save(struct cfile *config, char (*paths)[MAXFILES], char *pkgname, char *na
 /* Apply the contents of a package to the files
  * in the package
  */
-void apply(struct cfile *config, char (*paths)[MAXFILES], char *pkgname, char *name);
+void apply(char (*paths)[MAXFILES], char *pkgname, char *name);
 
 /* Remove the package */
 void rm(char *pkgname);
