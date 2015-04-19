@@ -14,7 +14,7 @@ polka-dot comes with some commands:
 - `add`
 - `reset`  
   
-polka-dot works with a config file that must be written, containing a path to the file to be packaged. This will serve as the *queue* for files to be packaged.  
+polka-dot works with a config file in ~/.polka-dot/config. This will serve as the *queue* for files to be packaged.  
 
 Example config file:
 ```
@@ -26,11 +26,11 @@ Example config file:
 ###Managing Packages  
 ####save
 `polka-dot save package-name`  
-`save` will package the files listed in the config file into a polka-dot *package*.
+`save` will package the files listed in the queue into a polka-dot *package*.
 
 ####apply
 `polka-dot apply package-name`  
-`apply` will apply the polka-dot package to the files listed in the config file.
+`apply` will apply the polka-dot package to the files in the package.
 
 ####del
 `polka-dot del package-name`  
