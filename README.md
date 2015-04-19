@@ -10,10 +10,10 @@ polka-dot comes with some commands:
 - `apply`  
 - `del`  
 - `list`  
-- `show`
+- `queue`
 - `add`
   
-polka-dot works with a config file that must be written, containing a path to the file to be packaged.  
+polka-dot works with a config file that must be written, containing a path to the file to be packaged. This will serve as the *queue* for files to be packaged.  
 
 Example config file:
 ```
@@ -22,7 +22,7 @@ Example config file:
 ~/.gtkrc-2.0
 ~/.i3/config
 ```
-
+###Managing Packages  
 ####save
 `polka-dot save package-name`  
 `save` will package the files listed in the config file into a polka-dot *package*.
@@ -38,10 +38,11 @@ Example config file:
 ####list
 `polka-dot list`  
 `list` will list all of the currently saved packages.
-  
-####show
-`polka-dot show`  
-`show` will list all of the files currently queued for packaging.  
+
+###Managing Queue  
+####queue
+`polka-dot queue`  
+`queue` will list all of the files currently queued for packaging.  
 
 ####add
 `polka-dot add path-to-file`  

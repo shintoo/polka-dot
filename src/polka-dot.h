@@ -4,7 +4,7 @@
 #define ERR_MF   2
 
 /* Constants for the command provided by the second argument */
-enum command {CMD_ERROR, SAVE, APPLY, DELETE, LIST, SHOW, ADD};
+enum command {CMD_ERROR, SAVE, APPLY, DELETE, LIST, QUEUE, ADD, STATUS};
 
 /* Config file: pointer to the file and the number of paths in the file */
 struct cfile {
@@ -38,7 +38,9 @@ void apply(char (*paths)[MAXFILES], char *pkgname, char *name);
 void del(char *pkgname);
 
 /* Show files in config */
-void show(int count, char (*paths)[MAXFILES]);
+void queue(int count, char (*paths)[MAXFILES]);
 
 /* Add a path to the config */
 void add(char *path, char (*paths)[MAXFILES], struct cfile *config);
+
+void status(char *pkgname, char *pkgpath);

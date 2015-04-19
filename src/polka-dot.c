@@ -5,23 +5,28 @@ void printUsage(char *str, enum command cmd) {
 		case SAVE ... DELETE:
 			fprintf(stderr, "usage: %s %s <package-name>\n", str, cmd == SAVE ? "save" : cmd == APPLY ? "apply" : "del");
 			break;
-		case LIST ... SHOW:
-			fprintf(stderr, "usage: %s %s\n", str, cmd == LIST ? "list" : "show");
+		case LIST ... QUEUE:
+			fprintf(stderr, "usage: %s %s\n", str, cmd == LIST ? "list" : "queue");
+			break;
+		case ADD:
+			fprintf(stderr, "usage: add <path-to-file>\n");
 			break;
 		default:
 			fprintf(stderr, "usage: %s <command> [<package-name>]\n\ncommands:\n"
-					"    save <package-name> \tSave the current configuration as a package\n"
-					"    apply <package-name>\tApply the package\n"
+					"    save <package-name>  \tSave the files in queue to a package\n"
+					"    apply <package-name> \tApply the package\n"
 					"    del <package-name>   \tRemove the package\n"
-					"    list                \tList saved packages\n"
-					"    show                \tList files queued to be saved\n", str);
+					"    list                 \tList saved packages\n"
+					"    queue                 \tList files queued to be saved\n"
+					"    add <path-to-file    \tAdd a path to the queue\n"
+					"    status <package-name>\tList files saved in package\n", str);
 	}
 }
 
 //finds string str in file fp, returns location at end of string
 int findString(FILE *fp, char *str, fpos_t *strloc) {
 	char c;
-	int len, i = 0, ret_val = 1;			// ret_val: 0 = notfound, 1 = found
+	int len, i = 0, ret_val = 1;			// ret_val: 1 = notfound, 0 = found
 
 	len = strlen(str);
 	while ((c = fgetc(fp)) != EOF) {
@@ -60,12 +65,15 @@ int getcmd(int argc, char **argv) {
 			exit(EXIT_FAILURE);
 		}
 	}
-	else if ((strncmp(argv[1], "show", 4)) == 0) {
-		cmd = SHOW;
+	else if ((strncmp(argv[1], "queue", 5)) == 0) {
+		cmd = QUEUE;
 		if (argc != 2) {
 			printUsage(argv[0], cmd);
 			exit(EXIT_FAILURE);
 		}
+	}
+	else if ((strncmp(argv[1], "status", 6)) == 0) {
+		cmd = STATUS;
 	}
 	else if ((strncmp(argv[1], "save", 4)) == 0) {
 		cmd = SAVE;
@@ -80,7 +88,7 @@ int getcmd(int argc, char **argv) {
 		cmd = ADD;
 	}
 
-	if (argc != 3 && cmd != LIST && cmd != SHOW) {
+	if (argc != 3 && cmd != LIST && cmd != QUEUE) {
 		printUsage(argv[0], cmd);
 		exit(EXIT_FAILURE);
 	}
@@ -276,10 +284,15 @@ void list(char *home) {
 	}
 }
 
-void show(int count, char (*paths)[MAXFILES]) {
-	puts("Files to be saved:");
-	for (int i = 0; i < count; i++) {
-		printf("\t%s\n", paths[i]);
+void queue(int count, char (*paths)[MAXFILES]) {
+	if (count == 0) {
+		puts("No files in queue!");
+	}
+	else {
+		puts("Files to be saved:");
+		for (int i = 0; i < count; i++) {
+			printf("\t%s\n", paths[i]);
+		}
 	}
 }
 
@@ -298,3 +311,29 @@ void add(char *path, char (*paths)[MAXFILES], struct cfile *config) {
 	fputc('\n', config->file);
 	printf("File '%s' added to queue.\n", path);
 }
+
+void status(char *pkgname, char *pkgpath) {
+	FILE *pkg = fopen(pkgpath, "r");
+	fpos_t loc;
+	char endbuf[5], filepath[64];
+	int ip = 0, found = 0;
+	char c;
+		
+	printf("Files in package %s:\n", pkgname);
+	while (c != EOF) {
+		if (found = 1) {
+			findString(pkg, "---file: ", &loc);
+		}
+		fgetc(pkg);
+		found = 0;
+		c = fgetc(pkg);
+		filepath[ip++] = c;
+		if (c == ' ') {
+			filepath[ip] = '\0';
+			printf("\t%s", filepath);
+			ip = 0;
+			found = 1;
+		}
+	}
+}
+
