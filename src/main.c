@@ -5,19 +5,15 @@
  * See README.md for installation and usage.
  *
  * TODO:
- *		- Ask user to confidel if when saving a package,
+ *		- Clean up getcmd()
+ *		- Ask user to confirm if when saving a package,
  *		  there is already a package with that name.
- * 		- Add <commandname> command: 'polka-dot <commandname> <package-name>,
- *		  which queues which files have versions in the package.
+ * 		- Fix status command: 'polka-dot statis <package-name>,
+ *		  which lists which files have versions in the package.
  *		- Add option to 'apply' that allows user to apply the
  *		  package but excludes a specified filename(s), i.e.
  *		  `polka-dot apply --exclude file1 file2`
- *		- Add add, rm (change current rm to delete), and status commands:
- *			- add:    takes filename argument, adds it to config
- *			- rm:  	  takes filename argument, removes it from config
- *		    - queue: lists files in config
- *
- *		- GTK GUI
+ *		- Add rm:  	  takes filename argument, removes it from config
  */
 
 #include <dirent.h>
@@ -96,6 +92,9 @@ int main(int argc, char **argv) {
 			break;
 		case STATUS:
 			status(argv[2], pkgname);
+			break;
+		case RESET:
+			fopen(conf, "w");
 			break;
 		default:
 			fprintf(stderr, "%s: Internal error. Check arguments?", argv[0]);

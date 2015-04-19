@@ -12,6 +12,7 @@ polka-dot comes with some commands:
 - `list`  
 - `queue`
 - `add`
+- `reset`  
   
 polka-dot works with a config file that must be written, containing a path to the file to be packaged. This will serve as the *queue* for files to be packaged.  
 
@@ -47,6 +48,10 @@ Example config file:
 ####add
 `polka-dot add path-to-file`  
 `add` will add the path to the queue of files to be packaged.  
+
+####reset
+`polka-dot reset`  
+`reset` will clear the queue.  
 
 ##Notes  
 - polka-dot will not save your current configuration when `apply` is used, so make sure to `save` before you `apply` if you wish to save your current configuration before changing!  
