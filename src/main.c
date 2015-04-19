@@ -5,16 +5,16 @@
  * See README.md for installation and usage.
  *
  * TODO:
- *		- Ask user to confirm if when saving a package,
+ *		- Ask user to confidel if when saving a package,
  *		  there is already a package with that name.
  * 		- Add show command: 'polka-dot show <package-name>,
  *		  which shows which files have versions in the package.
  *		- Add option to 'apply' that allows user to apply the
  *		  package but excludes a specified filename(s), i.e.
  *		  `polka-dot apply --exclude file1 file2`
- *		- Add add, rm (change current rm to delete), and status commands:
+ *		- Add add, del (change current rm to delete), and status commands:
  *			- add:    takes filename argument, adds it to config
- *			- rm:  	  takes filename argument, removes it from config
+ *			- del:  	  takes filename argument, removes it from config
  *		    - status: lists files in config
  *
  *		- GTK GUI
@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
 #ifdef DEBUG
 	printf("conf: %s\n", conf);
 #endif
-	if ((config.file = fopen(conf, "r")) == NULL) {
+	if ((config.file = fopen(conf, "a+")) == NULL) {
 		fprintf(stderr, "%s: config file not found\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
@@ -81,8 +81,8 @@ int main(int argc, char **argv) {
 		case APPLY:
 			apply(paths, pkgname, argv[2]);
 			break;
-		case REMOVE:
-			rm(pkgname);
+		case DELETE:
+			del(pkgname);
 			printf("Package %s deleted.\n", argv[2]);
 			break;
 		case LIST:
@@ -90,6 +90,9 @@ int main(int argc, char **argv) {
 			break;
 		case SHOW:
 			show(config.filecount, paths);
+			break;
+		case ADD:
+			add(argv[2], paths, &config);
 			break;
 		default:
 			fprintf(stderr, "%s: Internal error. Check arguments?", argv[0]);

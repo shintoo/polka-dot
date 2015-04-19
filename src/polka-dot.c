@@ -2,8 +2,8 @@
 
 void printUsage(char *str, enum command cmd) {
 	switch (cmd) {
-		case SAVE ... REMOVE:
-			fprintf(stderr, "usage: %s %s <package-name>\n", str, cmd == SAVE ? "save" : cmd == APPLY ? "apply" : "rm");
+		case SAVE ... DELETE:
+			fprintf(stderr, "usage: %s %s <package-name>\n", str, cmd == SAVE ? "save" : cmd == APPLY ? "apply" : "del");
 			break;
 		case LIST ... SHOW:
 			fprintf(stderr, "usage: %s %s\n", str, cmd == LIST ? "list" : "show");
@@ -12,7 +12,7 @@ void printUsage(char *str, enum command cmd) {
 			fprintf(stderr, "usage: %s <command> [<package-name>]\n\ncommands:\n"
 					"    save <package-name> \tSave the current configuration as a package\n"
 					"    apply <package-name>\tApply the package\n"
-					"    rm <package-name>   \tRemove the package\n"
+					"    del <package-name>   \tRemove the package\n"
 					"    list                \tList saved packages\n"
 					"    show                \tList files queued to be saved\n", str);
 	}
@@ -60,7 +60,7 @@ int getcmd(int argc, char **argv) {
 			exit(EXIT_FAILURE);
 		}
 	}
-	if ((strncmp(argv[1], "show", 4)) == 0) {
+	else if ((strncmp(argv[1], "show", 4)) == 0) {
 		cmd = SHOW;
 		if (argc != 2) {
 			printUsage(argv[0], cmd);
@@ -70,13 +70,14 @@ int getcmd(int argc, char **argv) {
 	else if ((strncmp(argv[1], "save", 4)) == 0) {
 		cmd = SAVE;
 	}
-
 	else if ((strncmp(argv[1], "apply", 6)) == 0) {
 		cmd = APPLY;
 	}
-
-	else if ((strncmp (argv[1], "rm", 2)) == 0) {
-		cmd = REMOVE;
+	else if ((strncmp(argv[1], "del", 2)) == 0) {
+		cmd = DELETE;
+	}
+	else if ((strncmp(argv[1], "add", 3)) == 0) {
+		cmd = ADD;
 	}
 
 	if (argc != 3 && cmd != LIST && cmd != SHOW) {
@@ -95,7 +96,7 @@ int readConfig(struct cfile *config, char (*paths)[MAXFILES]) {
 		while ((c = fgetc(config->file)) != '\n' && c != EOF) {
 			if (c == '~') {
 				if (ci != 0) {
-					fprintf(stderr, "Config formatting error: config.%d.%d", fi, ci);
+					fprintf(stderr, "Config fodelatting error: config.%d.%d", fi, ci);
 					exit(EXIT_FAILURE);
 				}
 				home = getenv("HOME");
@@ -241,7 +242,7 @@ void apply(char (*paths)[MAXFILES], char *pkgname, char *name) {
 	printf("Package %s applied.\n", name);
 }
 
-void rm(char *pkgname) {
+void del(char *pkgname) {
 	if (remove(pkgname) != 0) {
 		fprintf(stderr, "Error removing file '%s'\n", pkgname);
 		exit(EXIT_FAILURE);
@@ -280,4 +281,20 @@ void show(int count, char (*paths)[MAXFILES]) {
 	for (int i = 0; i < count; i++) {
 		printf("\t%s\n", paths[i]);
 	}
+}
+
+void add(char *path, char (*paths)[MAXFILES], struct cfile *config) {
+	if (path[0] == '\0') {
+		fprintf(stderr, "Error adding file.\n");
+		exit(EXIT_FAILURE);
+	}
+	for (int i = 0; i < config->filecount; i++) {
+		if ((strcmp(paths[i], path)) == 0) {
+			printf("File %s already queued.\n", path);
+			exit(EXIT_FAILURE);
+		}
+	}
+	fputs(path, config->file);
+	fputc('\n', config->file);
+	printf("File '%s' added to queue.\n", path);
 }

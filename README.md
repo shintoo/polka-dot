@@ -10,7 +10,8 @@ polka-dot comes with four commands:
 - `apply`  
 - `rm`  
 - `list`  
-- `show`  
+- `show`
+- `add`
   
 polka-dot works with a config file that must be written, containing a path to the file to be packaged.  
 
@@ -41,6 +42,10 @@ Example config file:
 ###show
 `polka-dot show`  
 `show` will list all of the files currently queued for packaging.  
+
+###add
+`polka-dot add path-to-file`  
+`add` will add the path to the queue of files to be packaged.  
 
 ##Notes  
 - polka-dot will not save your current configuration when `apply` is used, so make sure to `save` before you `apply` if you wish to save your current configuration before changing!  
