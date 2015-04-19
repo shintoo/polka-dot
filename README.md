@@ -5,7 +5,7 @@ A simple dotfile and configuration manager.
 Run `sh compile`, then move the resulting executable to your PATH.
 
 ##Usage
-polka-dot comes with four commands:
+polka-dot comes with some commands:
 - `save`  
 - `apply`  
 - `del`  
