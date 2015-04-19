@@ -8,7 +8,7 @@ Run `sh compile`, then move the resulting executable to your PATH.
 polka-dot comes with four commands:
 - `save`  
 - `apply`  
-- `rm`  
+- `del`  
 - `list`  
 - `show`
 - `add`
@@ -31,9 +31,9 @@ Example config file:
 `polka-dot apply package-name`  
 `apply` will apply the polka-dot package to the files listed in the config file.
 
-####rm
-`polka-dot rm package-name`  
-`rm` will remove the polka-dot package from polka-dot.
+####del
+`polka-dot del package-name`  
+`del` will remove the polka-dot package from polka-dot.
 
 ####list
 `polka-dot list`  
