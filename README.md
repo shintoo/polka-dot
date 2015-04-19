@@ -39,7 +39,7 @@ Example config file:
 `list` will list all of the currently saved packages.
   
 ###show
-`polka-dot show`
+`polka-dot show`  
 `show` will list all of the files currently queued for packaging.  
 
 ##Notes  
