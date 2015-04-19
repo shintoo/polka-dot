@@ -23,27 +23,27 @@ Example config file:
 ~/.i3/config
 ```
 
-###save
+####save
 `polka-dot save package-name`  
 `save` will package the files listed in the config file into a polka-dot *package*.
 
-###apply
+####apply
 `polka-dot apply package-name`  
 `apply` will apply the polka-dot package to the files listed in the config file.
 
-###rm
+####rm
 `polka-dot rm package-name`  
 `rm` will remove the polka-dot package from polka-dot.
 
-###list
+####list
 `polka-dot list`  
 `list` will list all of the currently saved packages.
   
-###show
+####show
 `polka-dot show`  
 `show` will list all of the files currently queued for packaging.  
 
-###add
+####add
 `polka-dot add path-to-file`  
 `add` will add the path to the queue of files to be packaged.  
 
