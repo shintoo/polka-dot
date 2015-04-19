@@ -5,7 +5,15 @@ A simple dotfile and configuration manager.
 Run `sh compile`, then move the resulting executable to your PATH.
 
 ##Usage
-polka-dot comes with four commands: `save`, `apply`, `rm`, and `list`. The former two work with a config file that must be written, containing a path to the file to be packaged.
+polka-dot comes with four commands:
+- `save`  
+- `apply`  
+- `rm`  
+- `list`  
+- `show`  
+  
+polka-dot works with a config file that must be written, containing a path to the file to be packaged.  
+
 Example config file:
 ```
 ~/.vimrc
@@ -29,6 +37,10 @@ Example config file:
 ###list
 `polka-dot list`  
 `list` will list all of the currently saved packages.
+  
+###show
+`polka-dot show`
+`show` will list all of the files currently queued for packaging.  
 
 ##Notes  
 - polka-dot will not save your current configuration when `apply` is used, so make sure to `save` before you `apply` if you wish to save your current configuration before changing!  

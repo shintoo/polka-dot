@@ -88,10 +88,12 @@ int main(int argc, char **argv) {
 		case LIST:
 			list(home);
 			break;
+		case SHOW:
+			show(config.filecount, paths);
+			break;
 		default:
 			fprintf(stderr, "%s: Internal error. Check arguments?", argv[0]);
 			exit(EXIT_FAILURE);
 	}
-
 	return 0;
 }

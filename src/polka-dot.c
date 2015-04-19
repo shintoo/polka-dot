@@ -3,17 +3,18 @@
 void printUsage(char *str, enum command cmd) {
 	switch (cmd) {
 		case SAVE ... REMOVE:
-			fprintf(stderr, "usage: %s %s <package-name>\n", str, cmd == 1 ? "save" : cmd == 2 ? "apply" : "rm");
+			fprintf(stderr, "usage: %s %s <package-name>\n", str, cmd == SAVE ? "save" : cmd == APPLY ? "apply" : "rm");
 			break;
-		case LIST:
-			fprintf(stderr, "usage: %s list\n", str);
+		case LIST ... SHOW:
+			fprintf(stderr, "usage: %s %s\n", str, cmd == LIST ? "list" : "show");
 			break;
 		default:
 			fprintf(stderr, "usage: %s <command> [<package-name>]\n\ncommands:\n"
 					"    save <package-name> \tSave the current configuration as a package\n"
 					"    apply <package-name>\tApply the package\n"
 					"    rm <package-name>   \tRemove the package\n"
-					"    list                \tList saved packages\n", str);
+					"    list                \tList saved packages\n"
+					"    show                \tList files queued to be saved\n", str);
 	}
 }
 
@@ -48,31 +49,37 @@ int getcmd(int argc, char **argv) {
 	enum command cmd;
 
 	if (argc != 3 && argc != 2) {
-		printUsage(argv[0], cmd);
+		printUsage(argv[0], 0);
 		exit(EXIT_FAILURE);
 	}
 	
-	if (strncmp(argv[1], "list", 4) == 0) {
+	if ((strncmp(argv[1], "list", 4)) == 0) {
 		cmd = LIST;
 		if (argc != 2) {
 			printUsage(argv[0], cmd);
 			exit(EXIT_FAILURE);
 		}
 	}
-
-	else if (strncmp(argv[1], "save", 4) == 0) {
+	if ((strncmp(argv[1], "show", 4)) == 0) {
+		cmd = SHOW;
+		if (argc != 2) {
+			printUsage(argv[0], cmd);
+			exit(EXIT_FAILURE);
+		}
+	}
+	else if ((strncmp(argv[1], "save", 4)) == 0) {
 		cmd = SAVE;
 	}
 
-	else if (strncmp(argv[1], "apply", 6) == 0) {
+	else if ((strncmp(argv[1], "apply", 6)) == 0) {
 		cmd = APPLY;
 	}
 
-	else if (strncmp (argv[1], "rm", 2) == 0) {
+	else if ((strncmp (argv[1], "rm", 2)) == 0) {
 		cmd = REMOVE;
 	}
 
-	if (argc != 3 && cmd != LIST) {
+	if (argc != 3 && cmd != LIST && cmd != SHOW) {
 		printUsage(argv[0], cmd);
 		exit(EXIT_FAILURE);
 	}
@@ -133,7 +140,10 @@ void save(struct cfile *config, char (*paths)[MAXFILES], char *pkgname, char *na
 	}
 #endif
 	for (int i = 0; i < config->filecount; i++) {
-		temp = fopen(paths[i], "r");
+		if ((temp = fopen(paths[i], "r")) == NULL) {
+			fprintf(stderr, "Error: file '%s' not found.\n", paths[i]);
+			exit(EXIT_FAILURE);
+		}
 		fprintf(pkg, "---file: %s---\n", paths[i]);
 		while ((c = fgetc(temp)) != EOF) {
 			fputc(c, pkg);
@@ -159,7 +169,6 @@ void apply(char (*paths)[MAXFILES], char *pkgname, char *name) {
 		fprintf(stderr, "Package '%s' not found\n", name);
 		exit(EXIT_FAILURE);
 	}
-
 	while (c != EOF) {				// from end of beginfile tag to beginning of endfile tag
 		c = fgetc(pkg);
 		if (c == endfiletag[0]) {				// Start comparing if first char is found
@@ -185,14 +194,13 @@ void apply(char (*paths)[MAXFILES], char *pkgname, char *name) {
 	for (int i = 0; i < filecount; i++) {
 		filetag = (char *) malloc(13 + strlen(paths[i]));
 		strcat(filetag, "---file: ");
-		strcat(filetag, paths[i]);				// filetag = "{{ file: <paths[i]> }}\n"
+		strcat(filetag, paths[i]);				// filetag = "---file: <paths[i]>---\n"
 		strcat(filetag, "---\n");
 		findString(pkg, filetag, &floc);		// floc is at the end of beginfile tag
 		fsetpos(pkg, &floc);
 		temp = fopen(paths[i], "w");
 		while (endflag == 0) {					// from end of beginfile tag to beginning of endfile tag
 			c = fgetc(pkg);
-//			fputc(c, temp);
 			if (c == endfiletag[0]) {			// Start comparing if first char is found
 				endbuf[0] = c;
 				for (int n = 1; n < 14; n++) {
@@ -212,7 +220,6 @@ void apply(char (*paths)[MAXFILES], char *pkgname, char *name) {
 				}
 				endbuf[eblen + 1] = '\0';
 				if (endflag == 1) {
-//					fputc('\b', temp);
 					break;
 				}
 				else {
@@ -265,5 +272,12 @@ void list(char *home) {
 	else {
 		fprintf(stderr, "Could not open package directory.\nDid you delete '%s/.polka-dot/'?\n", home);
 		exit(EXIT_FAILURE);
+	}
+}
+
+void show(int count, char (*paths)[MAXFILES]) {
+	puts("Files to be saved:");
+	for (int i = 0; i < count; i++) {
+		printf("\t%s\n", paths[i]);
 	}
 }
