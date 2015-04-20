@@ -4,7 +4,7 @@
 #define ERR_MF   2
 
 /* Constants for the command provided by the second argument */
-enum command {CMD_ERROR, SAVE, APPLY, DELETE, LIST, QUEUE, ADD, STATUS, RESET};
+enum command {CMD_ERROR, SAVE, APPLY, DELETE, STATUS, ADD, LIST, QUEUE, RESET};
 
 /* Config file: pointer to the file and the number of paths in the file */
 struct cfile {

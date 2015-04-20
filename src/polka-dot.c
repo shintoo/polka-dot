@@ -2,27 +2,25 @@
 
 void printUsage(char *str, enum command cmd) {
 	switch (cmd) {
-		case SAVE ... DELETE:
-			fprintf(stderr, "usage: %s %s <package-name>\n", str, cmd == SAVE ? "save" : cmd == APPLY ? "apply" : "del");
+		case SAVE ... STATUS:
+			fprintf(stderr, "usage: %s %s <package-name>\n", str, cmd == SAVE ? "save" : cmd == APPLY ? "apply"
+																: cmd == DELETE ? "delete" : "status");
 			break;
-		case LIST ... QUEUE:
+		case LIST ... RESET:
 			fprintf(stderr, "usage: %s %s\n", str, cmd == LIST ? "list" : "queue");
 			break;
 		case ADD:
 			fprintf(stderr, "usage: %s add <path-to-file>\n", str);
 			break;
-		case STATUS ... RESET:
-			fprintf(stderr, "usage: %s %s\n", str, cmd == STATUS ? "status" : "reset");
-			break;
 		default:
-			fprintf(stderr, "\nusage: %s <command> [<package-name>]\n\ncommands:\n"
+			fprintf(stderr, "usage: %s <command> [<package-name>]\n\nCommands:\n"
 					"    save <package-name>  \tSave the files in queue to a package\n"
 					"    apply <package-name> \tApply the package\n"
 					"    del <package-name>   \tRemove the package\n"
+					"    status <package-name>\tList files saved in package\n"
 					"    list                 \tList saved packages\n"
 					"    queue                \tList files queued to be saved\n"
 					"    add <path-to-file>   \tAdd a path to the queue\n"
-					"    status <package-name>\tList files saved in package\n"
 					"    reset                \tClear the queue\n", str);
 	}
 	exit(EXIT_FAILURE);
@@ -87,30 +85,19 @@ int getcmd(int argc, char **argv) {
 	else if ((strncmp(argv[1], "add", 3)) == 0) {
 		cmd = ADD;
 	}
-	
-	switch (cmd) {
-		case SAVE ... DELETE:
-			if (argc != 3) {
-				printUsage(argv[0], cmd);
-			}
-			break;
-		case LIST ... QUEUE:
-			if (argc != 2) {
-				printUsage(argv[0], cmd);
-			}
-			break;
-		case ADD ... STATUS:
-			if (argc != 3) {
-				printUsage(argv[0], cmd);
-			}
-			break;
-		case RESET:
-			if (argc != 2) {
-				printUsage(argv[0], cmd);
-			}
-			break;
-	}	
 
+	switch (cmd) {
+		case SAVE ... ADD:
+			if (argc != 3) {
+				printUsage(argv[0], cmd);
+			}
+			break;
+		case LIST ... RESET:
+			if (argc != 2) {
+				printUsage(argv[0], cmd);
+			}
+			break;
+	}
 	return cmd;
 }
 
@@ -133,6 +120,9 @@ int readConfig(struct cfile *config, char (*paths)[MAXFILES]) {
 			}
 			else {
 				temp[ci++] = c;
+				if (ci > MAXPATH) {
+					return ERR_MP;
+				}
 			}
 		}
 		if (c == EOF) {
