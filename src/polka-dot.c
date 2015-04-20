@@ -99,12 +99,12 @@ int getcmd(int argc, char **argv) {
 				printUsage(argv[0], cmd);
 			}
 			break;
-		case ADD:
+		case ADD ... STATUS:
 			if (argc != 3) {
 				printUsage(argv[0], cmd);
 			}
 			break;
-		case STATUS ... RESET:
+		case RESET:
 			if (argc != 2) {
 				printUsage(argv[0], cmd);
 			}
