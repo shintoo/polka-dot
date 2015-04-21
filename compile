@@ -1,1 +1,1 @@
-gcc -std=c11 src/main.c -o polka-dot
+gcc -std=c11 src/main.c -o polka-dot && mkdir ~/.polka-dot && echo "" >> ~/.polka-dot/config

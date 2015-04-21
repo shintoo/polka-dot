@@ -14,15 +14,6 @@ polka-dot comes with some commands:
 - `add`
 - `reset`  
   
-polka-dot works with a config file in ~/.polka-dot/config. This will serve as the *queue* for files to be packaged.  
-
-Example config file:
-```
-~/.vimrc
-~/.Xdefaults
-~/.gtkrc-2.0
-~/.i3/config
-```
 ###Managing Packages  
 ####save
 `polka-dot save package-name`  
