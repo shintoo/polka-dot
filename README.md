@@ -16,13 +16,15 @@ polka-dot comes with some commands:
 - `reset`  
   
 ###Managing Packages  
+A *package* is a selection of files (specified in the *queue*) saved together in an archive.  
+
 ####save
 `polka-dot save package-name`  
-`save` will package the files listed in the queue into a *package*.
+`save` will package the files listed in the queue into a package.
 
 ####apply
 `polka-dot apply package-name`  
-`apply` will apply the package to the files in the package.
+`apply` will apply the package to the files listed in the queue.
 
 ####del
 `polka-dot del package-name`  
@@ -37,6 +39,8 @@ polka-dot comes with some commands:
 `list` will list all of the currently saved packages.
 
 ###Managing Queue  
+The queue is the list of files to be saved into a package.  
+
 ####queue
 `polka-dot queue`  
 `queue` will list all of the files currently queued for packaging.  
@@ -51,5 +55,6 @@ polka-dot comes with some commands:
 
 ##Notes  
 - polka-dot will not save your current configuration when `apply` is used, so make sure to `save` before you `apply` if you wish to save your current configuration before changing!  
-- Many programs require some sort of reload or restart to apply their config. To see the effects of `apply`, make sure to do any required refreshes.
+- Many programs require some sort of reload or restart to apply their config. To see the effects of `apply`, make sure to do any required refreshes.  
+- Currently, the files in the package must match the files in the queue. To do this, use `status` and `add` each file. Currently working on a fix.
  

@@ -5,6 +5,8 @@
  * See README.md for installation and usage.
  *
  * TODO:
+ *		- Make apply() not use the config file, but the files			********
+ *		  in the package
  *		- Ask user to confirm if when saving a package,					***
  *		  there is already a package with that name.
  *		- Add option to 'apply' that allows user to apply the			*
