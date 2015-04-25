@@ -217,8 +217,8 @@ void apply(char (*paths)[MAXFILES], char *pkgname, char *name) {
 		strcat(filetag, paths[i]);				// filetag = "---file: <paths[i]>---\n"
 		strcat(filetag, "---\n");
 		findString(pkg, filetag, &floc);
-		fseek(pkg, strlen(filetag), SEEK_CUR);
 		fsetpos(pkg, &floc);
+		fseek(pkg, strlen(filetag) - 1, SEEK_CUR);
 		temp = fopen(paths[i], "w");
 		while (endflag == 0) {					// from end of beginfile tag to beginning of endfile tag
 			c = fgetc(pkg);
