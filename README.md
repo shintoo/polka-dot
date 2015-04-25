@@ -9,6 +9,7 @@ polka-dot comes with some commands:
 - `save`  
 - `apply`  
 - `del`  
+- `status`  
 - `list`  
 - `queue`
 - `add`
@@ -17,15 +18,19 @@ polka-dot comes with some commands:
 ###Managing Packages  
 ####save
 `polka-dot save package-name`  
-`save` will package the files listed in the queue into a polka-dot *package*.
+`save` will package the files listed in the queue into a *package*.
 
 ####apply
 `polka-dot apply package-name`  
-`apply` will apply the polka-dot package to the files in the package.
+`apply` will apply the package to the files in the package.
 
 ####del
 `polka-dot del package-name`  
-`del` will remove the polka-dot package from polka-dot.
+`del` will remove the package from polka-dot.
+
+####status
+`polka-dot status package-name`  
+`status` will list all the files saved in the package.  
 
 ####list
 `polka-dot list`  
