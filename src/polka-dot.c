@@ -13,7 +13,7 @@ void printUsage(char *str, enum command cmd) {
 			fprintf(stderr, "usage: %s add <path-to-file>\n", str);
 			break;
 		default:
-			fprintf(stderr, "usage: %s <command> [<package-name>]\n\nCommands:\n"
+			fprintf(stderr, "usage: %s <command> [<arg>]\n\nCommands:\n"
 					"    save <package-name>  \tSave the files in queue to a package\n"
 					"    apply <package-name> \tApply the package\n"
 					"    del <package-name>   \tRemove the package\n"
