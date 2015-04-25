@@ -5,15 +5,13 @@
  * See README.md for installation and usage.
  *
  * TODO:
- *		- Clean up getcmd()
- *		- Ask user to confirm if when saving a package,
+ *		- Ask user to confirm if when saving a package,					***
  *		  there is already a package with that name.
- * 		- Fix status command: 'polka-dot statis <package-name>,
- *		  which lists which files have versions in the package.
- *		- Add option to 'apply' that allows user to apply the
+ *		- Add option to 'apply' that allows user to apply the			*
  *		  package but excludes a specified filename(s), i.e.
  *		  `polka-dot apply --exclude file1 file2`
- *		- Add rm:  	  takes filename argument, removes it from config
+ *		- Add rm:  	  takes filename argument, removes it from config	**
+ *		- Improve portability of packages (handling of home and ~ in save and apply)
  */
 
 #include <dirent.h>
@@ -60,6 +58,9 @@ int main(int argc, char **argv) {
 		switch(rCerr) {
 			case ERR_MF:
 				fprintf(stderr, "%s: file limit exceeded\n", argv[0]);
+				exit(EXIT_FAILURE);
+			case ERR_MP:
+				fprintf(stderr, "%s: path size limit exceeded\n", argv[0]);
 				exit(EXIT_FAILURE);
 		}
 	}
