@@ -15,6 +15,9 @@ struct cfile {
 /* Print the usage when there is a user error*/
 void printUsage(char *str, enum command cmd);
 
+/* Compare a 'string' in a file with a given string str */
+int match(FILE *fp, const char *str);
+
 /* Find the location of a string in a file */
 int findString(FILE *fp, char *str, fpos_t *strloc);
 

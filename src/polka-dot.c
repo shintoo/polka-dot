@@ -26,31 +26,34 @@ void printUsage(char *str, enum command cmd) {
 	exit(EXIT_FAILURE);
 }
 
-//finds string str in file fp, returns location at end of string
-int findString(FILE *fp, char *str, fpos_t *strloc) {
+int match(FILE *fp, const char *str) {
 	char c;
-	int len, i = 0, ret_val = 1;			// ret_val: 1 = notfound, 0 = found
-
-	len = strlen(str);
-	while ((c = fgetc(fp)) != EOF) {
-		if (c == str[0]) {				// Start comparing if first char is found
-			for (i = 1; i < len; i++) {
-				if ((c = fgetc(fp)) == str[i]) {
-					if (i == len - 1) {
-						fgetpos(fp, strloc);
-						ret_val = 0;
-						break;
-					}
-				} else {
-					ret_val = 1;
-					break;
-				}
-			}
-			if (ret_val = 0)
-				break;
-		}
+	int i;
+	for (i = 0; str[i] != '\0'; i++) {
+		c = fgetc(fp);
+		if (feof(fp) || c != str[i])
+			return 0;
 	}
-	return ret_val;
+	return 1;
+}
+
+int findString(FILE *fp, char *str, fpos_t *strloc) {
+	if(str[0] == '\0') {
+		fgetpos(fp, strloc);
+		return 1;
+	}
+	char c;
+	for(c = fgetc(fp); !feof(fp); c = fgetc(fp)) {
+		if(c == str[0]) {
+			if(strloc != NULL) {
+				fgetpos(fp, strloc);
+			}
+			if(match(fp, str+1) == 1) {
+				return 1;
+			}
+		 }
+    }
+    return 0;
 }
 
 int getcmd(int argc, char **argv) {
@@ -175,7 +178,7 @@ void apply(char (*paths)[MAXFILES], char *pkgname, char *name) {
 	FILE *pkg;
 	FILE *temp;
 	char c;
-	fpos_t floc, endloc, curloc;				// Location of file tag, location of endfile tag, current location
+	fpos_t floc;// endloc, curloc;				// Location of file tag, location of endfile tag, current location
 	char *filetag;
 	char endbuf[15];
 	char *endfiletag = "---end file---";
@@ -213,7 +216,8 @@ void apply(char (*paths)[MAXFILES], char *pkgname, char *name) {
 		strcat(filetag, "---file: ");
 		strcat(filetag, paths[i]);				// filetag = "---file: <paths[i]>---\n"
 		strcat(filetag, "---\n");
-		findString(pkg, filetag, &floc);		// floc is at the end of beginfile tag
+		findString(pkg, filetag, &floc);
+		fseek(pkg, strlen(filetag), SEEK_CUR);
 		fsetpos(pkg, &floc);
 		temp = fopen(paths[i], "w");
 		while (endflag == 0) {					// from end of beginfile tag to beginning of endfile tag
@@ -324,27 +328,19 @@ void add(char *path, char (*paths)[MAXFILES], struct cfile *config) {
 void status(char *pkgname, char *pkgpath) {
 	FILE *pkg = fopen(pkgpath, "r");
 	fpos_t loc;
-	char endbuf[5], filepath[64];
-	char c = 0;
-
-	rewind(pkg);	
+	char c;
+	
+	rewind(pkg);
 	printf("Files in package %s:\n", pkgname);
-	findString(pkg, "---file:", &loc);
-	fsetpos(pkg, &loc);
-	while (c != EOF) {
-		putchar('\t');
+	while (findString(pkg, "---file:", &loc) == 1) {
+		fsetpos(pkg, &loc);
+		fseek(pkg, 7, SEEK_CUR);
 		c = fgetc(pkg);
+		putchar('\t');
 		do {
 			putchar(c);
 			c = fgetc(pkg);
 		} while (c != '-');
 		putchar('\n');
-		if (findString(pkg, "---file:", &loc) == 1) {
-			fsetpos(pkg, &loc);
-		}
-		else {
-			break;
-		}
 	}
 }
-
