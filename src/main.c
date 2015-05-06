@@ -39,9 +39,6 @@ int main(int argc, char **argv) {
 	home = getenv("HOME");
 	strncpy(conf, home, strlen(home));
 	strncat(conf, "/.polka-dot/config", 18);
-#ifdef DEBUG
-	printf("conf: %s\n", conf);
-#endif
 	if ((config.file = fopen(conf, "a+")) == NULL) {
 		fprintf(stderr, "%s: config file not found\n", argv[0]);
 		exit(EXIT_FAILURE);
@@ -52,10 +49,6 @@ int main(int argc, char **argv) {
 		strcat(pkgname, argv[2]);
 		strncat(pkgname, ".pd", 3);
 	}
-#ifdef DEBUG
-	printf("pkgname: %s\n", pkgname);
-#endif
-
 	if ((rCerr = readConfig(&config, paths)) != 0) {
 		switch(rCerr) {
 			case ERR_MF:
@@ -66,13 +59,6 @@ int main(int argc, char **argv) {
 				exit(EXIT_FAILURE);
 		}
 	}
-
-#ifdef DEBUG
-	for (int i = 0; i < config.filecount; i++) {
-		printf("main at 40: paths[%d]: %s\n", i, paths[i]);
-	}
-#endif
-	
 	switch (cmd) {
 		case SAVE:
 			save(&config, paths, pkgname, argv[2]);

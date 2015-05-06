@@ -46,4 +46,5 @@ void queue(int count, char (*paths)[MAXFILES]);
 /* Add a path to the config */
 void add(char *path, char (*paths)[MAXFILES], struct cfile *config);
 
+/* print the files in a package */
 void status(char *pkgname, char *pkgpath);

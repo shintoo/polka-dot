@@ -132,9 +132,9 @@ int readConfig(struct cfile *config, char (*paths)[MAXFILES]) {
 			break;
 		}
 		temp[ci] = '\0';
-#ifdef DEBUG
-		printf("54: temp: '%s'\n", temp);
-#endif
+
+
+
 		strncpy(paths[fi], temp, ci);
 		ci = 0;
 		fi++;
@@ -143,9 +143,7 @@ int readConfig(struct cfile *config, char (*paths)[MAXFILES]) {
 		}
 	}
 	config->filecount = fi;
-#ifdef DEBUG
-	printf("config->filecount at 66: %d\n", config->filecount);
-#endif
+
 	return 0;
 }
 
@@ -154,11 +152,6 @@ void save(struct cfile *config, char (*paths)[MAXFILES], char *pkgname, char *na
 	FILE *temp;
 	char c;
 
-#ifdef DEBUG
-	for (int i = 0; i < config->filecount; i++) {
-		printf("config->filecount: %d\npaths[%d] at 78: %s\n", config->filecount, i, paths[i]);
-	}
-#endif
 	for (int i = 0; i < config->filecount; i++) {
 		if ((temp = fopen(paths[i], "r")) == NULL) {
 			fprintf(stderr, "Error: file '%s' not found.\n", paths[i]);
@@ -178,7 +171,7 @@ void apply(char (*paths)[MAXFILES], char *pkgname, char *name) {
 	FILE *pkg;
 	FILE *temp;
 	char c;
-	fpos_t floc;// endloc, curloc;				// Location of file tag, location of endfile tag, current location
+	fpos_t floc;								// Location of file tag, location of endfile tag, current location
 	char *filetag;
 	char endbuf[15];
 	char *endfiletag = "---end file---";
@@ -189,7 +182,7 @@ void apply(char (*paths)[MAXFILES], char *pkgname, char *name) {
 		fprintf(stderr, "Package '%s' not found\n", name);
 		exit(EXIT_FAILURE);
 	}
-	while (c != EOF) {				// from end of beginfile tag to beginning of endfile tag
+	while (c != EOF) {							// from end of beginfile tag to beginning of endfile tag
 		c = fgetc(pkg);
 		if (c == endfiletag[0]) {				// Start comparing if first char is found
 			for (int n = 1; n < 14; n++) {
@@ -251,9 +244,7 @@ void apply(char (*paths)[MAXFILES], char *pkgname, char *name) {
 				fputc(c, temp);
 			}
 		}
-#ifdef DEBUG
-		printf("loopi: %d\n", i);
-#endif
+
 		endflag = 0;
 		fclose(temp);
 		free(filetag);
