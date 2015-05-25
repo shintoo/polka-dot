@@ -4,7 +4,7 @@ A simple dotfile and configuration manager.
 polka-dot allows you to save multiple config files into a single package and save it, so you are free to experiment with your configs without worry. Also, you can save multiple packages of config files, and swap out which are active with one command. For example, you can save your configs for your window manager, terminal, homepage, and GTK into a package, download or create new versions, and save that as another package. Then, you can easily switch between the two packages, changing the entire look of your desktop with one command.
 
 ##Installation
-Run `sh compile`, then move the resulting executable to your PATH.
+Run `make`, then move the resulting executable to your PATH.
 
 ##Usage
 polka-dot comes with some commands:
