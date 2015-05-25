@@ -7,3 +7,5 @@ all: polka-dot
 
 polka-dot: $(SRC) $(HDR)
 	$(CC) -o polka-dot $(SRC) $(LDFLAGS)
+	mkdir ~/.polka-dot
+	echo "" >> ~/.polka-dot/config
