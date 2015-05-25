@@ -16,12 +16,11 @@
  *		- Improve portability of packages (handling of home and ~ in save and apply)
  */
 
-#include <dirent.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include "polka-dot.c"
+#include "polka-dot.h"
 
 int main(int argc, char **argv) {
 	enum command cmd;

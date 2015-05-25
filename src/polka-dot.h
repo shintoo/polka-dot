@@ -1,3 +1,6 @@
+#ifndef _POLKA_DOT_H_
+#define _POLKA_DOT_H_
+
 #define MAXPATH  64
 #define MAXFILES 64
 #define ERR_MP   1
@@ -48,3 +51,8 @@ void add(char *path, char (*paths)[MAXFILES], struct cfile *config);
 
 /* print the files in a package */
 void status(char *pkgname, char *pkgpath);
+
+/* list saved packages */
+void list(char *home);
+
+#endif
