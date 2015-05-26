@@ -171,6 +171,7 @@ void save(struct cfile *config, char (*paths)[MAXFILES], char *pkgname, char *na
 		fclose(temp);
 	}
 	printf("Files packaged into %s.\n", name);
+	fclose(pkg);
 }
 
 void apply(char (*paths)[MAXFILES], char *pkgname, char *name) {
@@ -257,6 +258,7 @@ void apply(char (*paths)[MAXFILES], char *pkgname, char *name) {
 		rewind(pkg);
 	}
 	printf("Package %s applied.\n", name);
+	fclose(pkg);
 }
 
 void del(char *pkgname) {
@@ -340,4 +342,6 @@ void status(char *pkgname, char *pkgpath) {
 		} while (c != '-');
 		putchar('\n');
 	}
+
+	fclose(pkg);
 }

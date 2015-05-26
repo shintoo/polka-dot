@@ -29,6 +29,8 @@ int main(int argc, char **argv) {
 	char pkgname[128];
 	struct cfile config = {NULL, 0};
 	int rCerr;
+	
+	FILE *dummy;
 
 	if ((cmd = getcmd(argc, argv)) == CMD_ERROR) {
 		printUsage(argv[0], 0);
@@ -82,11 +84,14 @@ int main(int argc, char **argv) {
 			status(argv[2], pkgname);
 			break;
 		case RESET:
-			fopen(conf, "w");
+			dummy =fopen(conf, "w");
+			fclose(dummy);
 			break;
 		default:
 			fprintf(stderr, "%s: Internal error. Check arguments?", argv[0]);
 			exit(EXIT_FAILURE);
 	}
+
+	fclose(config.file);
 	return 0;
 }
